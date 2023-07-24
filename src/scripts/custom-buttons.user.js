@@ -17,11 +17,11 @@
     const intervalId = setInterval(() => {
         if (!sha256Hash || !sha256Hash[0]) return;
         sha256Hash = sha256Hash[0].toLowerCase();
-        const buttons_to_add = getButtons(sha256Hash)
         try {
             if (document.querySelector("file-view") && document.querySelector("file-view").shadowRoot.getElementById("report") && document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
                 clearInterval(intervalId)
-                document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
+                const buttons_to_add = getButtons(document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML, sha256Hash)
+                document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML = buttons_to_add
             }
         } catch (error) {
             clearInterval(intervalId)
@@ -29,8 +29,8 @@
         }
     }, 3000)
 
-    function getButtons(sha256Hash) {
-        return `
+    function getButtons(staticHTML, sha256Hash) {
+        return staticHTML + `
         <li class="nav-item" role="presentation">
            <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
               href="https://opentip.kaspersky.com/${sha256Hash}" target="_blank">
