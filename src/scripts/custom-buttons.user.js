@@ -102,7 +102,7 @@
          <div class="tags hstack gap-2">
             <!----> 
             <a class="badge rounded-pill bg-body-tertiary text-body" href="https://opentip.kaspersky.com/${report_data.FileGeneralInfo.Sha256}"> 
-             ${report_data.FileGeneralInfo.HitsCount} 
+             ${report_data.FileGeneralInfo.HitsCount ?? 0} 
             </a> <!----> 
          </div>
          <span class="fw-bold"> times</span> 
