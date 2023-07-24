@@ -139,6 +139,7 @@
    }
    function getOpenTipData(sha256Hash) {
       if (localStorage.getItem("opentip-data")) return;
+      localStorage.setItem("opentip-data", "already-fetched")
       if (!checkOpenTipKeyStatus()) {
          const resetKey = confirm("No or invalid Key found!\nDo you want to reset the local stored key?")
          if (resetKey) { deleteCookie("opentip_api_key"); alert("Please reload the page, to enter a new key!") }
