@@ -9,11 +9,11 @@
 // @updateURL    https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/custom-buttons.user.js
 // @downloadURL  https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/custom-buttons.user.js
 // ==/UserScript==
-(function() {
+(function () {
     'use strict';
     const hashRegex = /([0-9a-f]{64})/i;
     let sha245Hash = hashRegex.exec(window.location.href);
-    setTimeout(() => {
+    const intervalId = setInterval(() => {
         if (!sha245Hash || !sha245Hash[0]) return;
         sha245Hash = sha245Hash[0].toLowerCase();
         const buttons_to_add = `
@@ -50,6 +50,9 @@
        </a>
     </li>
     `
-        document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
-    }, 2000)
+        if (document.querySelector("file-view") && document.querySelector("file-view").shadowRoot.getElementById("report") && document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
+            clearInterval(intervalId)
+            document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
+        }
+    }, 3000)
 })();
