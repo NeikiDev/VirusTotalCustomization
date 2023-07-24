@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
+// @version      0.2
+// @description  Adds 4 Buttons to VirusTotal
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
