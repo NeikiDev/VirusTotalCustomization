@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.4
 // @description  Adds 4 Buttons to VirusTotal
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -134,8 +134,14 @@
                "x-api-key": "V7vq6qYgTCiTSxqFTjwtTw=="
             }
          }).then((res) => res.json().then((report_data) => {
-            setOpenTipDiv(report_data)
+            try {
+               setOpenTipDiv(report_data)
+            } catch (error) {
+               alert("Failed to fetch Opentip Data!")
+               console.log(error)
+            }
          })).catch((error) => {
+            alert("Failed to fetch Opentip Data!")
             console.log(error)
          })
       }
