@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.0.2
 // @description  Adds 4 Buttons to VirusTotal
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -111,6 +111,7 @@
       containerDiv.insertBefore(newDiv, containerDiv.firstChild)
    }
    function checkOpenTipKeyStatus() {
+      return true;
       const opentip_api_key = localStorage.getItem("opentip_api_key");
       if (!opentip_api_key) {
          const key = prompt("ENTER YOUR OPENTIP APIKEY\nNote: The key is stored locally in your Browser!")
