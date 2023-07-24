@@ -98,25 +98,41 @@
          </div>
       </div>
       <div class="col hstack gap-2 text-truncate">
-         <span class="fw-bold">KSN Hits</span> 
+         <span class="fw-bold">ksn has seen the file </span> 
          <div class="tags hstack gap-2">
             <!----> 
             <a class="badge rounded-pill bg-body-tertiary text-body" href="https://opentip.kaspersky.com/${report_data.FileGeneralInfo.Sha256}"> 
              ${report_data.FileGeneralInfo.HitsCount} 
             </a> <!----> 
          </div>
+         <span class="fw-bold"> times</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
       containerDiv.insertBefore(newDiv, containerDiv.firstChild)
    }
+
+   function getCookieValue(cookieName) {
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+         const [name, value] = cookie.trim().split('=');
+         if (name === cookieName) {
+            return decodeURIComponent(value);
+         }
+      }
+      return null;
+   }
+
+   function deleteCookie(cookieName) {
+      document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+   }
+
    function checkOpenTipKeyStatus() {
-      return true;
-      const opentip_api_key = localStorage.getItem("opentip_api_key");
+      const opentip_api_key = getCookieValue("opentip_api_key");
       if (!opentip_api_key) {
          const key = prompt("ENTER YOUR OPENTIP APIKEY\nNote: The key is stored locally in your Browser!")
          if (key) {
-            localStorage.setItem("opentip_api_key", key)
+            document.cookie = `opentip_api_key=${key};path=/`;
             return true;
          } else return false;
       } else return true;
@@ -124,14 +140,14 @@
    function getOpenTipData(sha256Hash) {
       if (!checkOpenTipKeyStatus()) {
          const resetKey = confirm("No or invalid Key found!\nDo you want to reset the local stored key?")
-         if (resetKey) { localStorage.removeItem("opentip_api_key"); alert("Please reload the page, to enter a new key!") }
+         if (resetKey) { deleteCookie("opentip_api_key"); alert("Please reload the page, to enter a new key!") }
       } else {
          fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/getresult/file?request=${sha256Hash}`, {
             method: "POST",
             headers: {
                "origin": "opentip.kaspersky.com",
                "x-request-with": "any",
-               "x-api-key": "V7vq6qYgTCiTSxqFTjwtTw=="
+               "x-api-key": getCookieValue("opentip_api_key")
             }
          }).then((res) => res.json().then((report_data) => {
             try {
