@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.0.6
-// @description  Adds 4 Buttons to VirusTotal and Opentip data
+// @version      1.0.8
+// @description  adds custom buttons and also loading opentip data report
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
@@ -69,6 +69,38 @@
         </li>
         `
    }
+   function addOpenTipDivLoader(sha256Hash) {
+      const newDiv = document.createElement("div");
+      newDiv.innerHTML = `
+      <div class="popular-threat-name border border-top-0 mb-2 p-3 hstack gap-4 bg-body-secondary" style="margin-top: -5px;">
+      <div class="col hstack gap-2">
+         <span class="fw-bold">Kaspersky Opentip Analysis</span> 
+         <a class="link-info hstack gap-1" href="https://opentip.kaspersky.com/${sha256Hash}">
+            Loading Data... 
+         </a>
+      </div>
+      <div class="col hstack gap-2 text-truncate">
+         <span class="fw-bold">Detection</span> 
+         <div class="tags hstack gap-2">
+            <a class="link-none hstack gap-1" href="https://opentip.kaspersky.com/${sha256Hash}">
+               -
+            </a>
+         </div>
+      </div>
+      <div class="col hstack gap-2 text-truncate">
+         <span class="fw-bold">ksn has seen the file </span> 
+         <div class="tags hstack gap-2">
+            <!----> 
+            <a class="badge rounded-pill bg-body-tertiary text-body" href="https://opentip.kaspersky.com/${sha256Hash}"> 
+             -
+            </a> <!----> 
+         </div>
+         <span class="fw-bold"> times</span> 
+      </div>
+   </div>`
+      const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
+      containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+   }
    function setOpenTipDiv(report_data) {
       let color = "info"
       if (report_data.Zone === "Green") {
@@ -109,9 +141,9 @@
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
+      containerDiv.removeChild(containerDiv.firstChild)
       containerDiv.insertBefore(newDiv, containerDiv.firstChild)
    }
-
    function getCookieValue(cookieName) {
       const cookies = document.cookie.split(';');
       for (const cookie of cookies) {
@@ -122,11 +154,9 @@
       }
       return null;
    }
-
    function deleteCookie(cookieName) {
       document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
    }
-
    function checkOpenTipKeyStatus() {
       const opentip_api_key = getCookieValue("opentip_api_key");
       if (!opentip_api_key) {
@@ -144,6 +174,7 @@
          const resetKey = confirm("No or invalid Key found!\nDo you want to reset the local stored key?")
          if (resetKey) { deleteCookie("opentip_api_key"); alert("Please reload the page, to enter a new key!") }
       } else {
+         addOpenTipDivLoader()
          fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/getresult/file?request=${sha256Hash}`, {
             method: "POST",
             headers: {
