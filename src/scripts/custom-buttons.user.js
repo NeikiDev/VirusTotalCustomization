@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.0.4
-// @description  Adds 4 Buttons to VirusTotal
+// @version      1.0.6
+// @description  Adds 4 Buttons to VirusTotal and Opentip data
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
@@ -132,7 +132,7 @@
       if (!opentip_api_key) {
          const key = prompt("ENTER YOUR OPENTIP APIKEY\nNote: The key is stored locally in your Browser!")
          if (key) {
-            document.cookie = `opentip_api_key=${key};path=/`;
+            document.cookie = `opentip_api_key=${encodeURIComponent(key)};path=/`;
             return true;
          } else return false;
       } else return true;
