@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.2
-// @description  VirusTotal customization plugin
+// @version      2.0.3
+// @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
