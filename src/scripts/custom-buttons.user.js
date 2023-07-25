@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.1.6
-// @description  adds custom buttons and also loading opentip data report
+// @version      1.1.7
+// @description  adds custom buttons and also (optional) loading opentip data report 
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
