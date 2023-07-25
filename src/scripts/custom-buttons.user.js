@@ -47,7 +47,7 @@
         </li>
         <li class="nav-item" role="presentation">
            <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
-              href="https://analyze.neiki.dev/reports/${sha256Hash}" target="_blank">
+              href="https://analyze.neiki.dev/generate?hash=${sha256Hash}" target="_blank">
               <span>
                  <!---->Neiki<!---->
               </span>
