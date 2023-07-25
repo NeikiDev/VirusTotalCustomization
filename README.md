@@ -33,6 +33,11 @@ That is my own website, i (neikidev) own the website "pleasedontbearealdomain.co
 to access the kaspersky opentip data over an proxy to disable the "cors" error. It doesnt store any user data or anything!
 made with "cors-anywhere". (Hosted on amazon aws ec2 server)
 
+### Script community bug
+
+Script doesnt work if you are on the community work or click on a virustotal link that ends on `/community`.
+to fix that go to any other tab and reload the page!
+
 ## Contact
 
 Any requests please to [Twitter - Neiki](https://twitter.com/neiki__) or Discord **neiki6000** - (neiki#4405)
