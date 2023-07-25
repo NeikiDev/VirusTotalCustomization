@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.1.9
+// @version      1.2.0
 // @description  adds custom buttons and also (optional) loading opentip data report 
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -219,6 +219,7 @@
          }).catch((error) => {
             addOpenTipDivError()
             console.log(error)
+            console.log('https://opentip.kaspersky.com/Help/Doc_data/GetFileReport.htm#:~:text=web%20interface.-,Responses,-200%20OK')
          })
       }
    }
