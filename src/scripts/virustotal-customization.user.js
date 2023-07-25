@@ -194,7 +194,7 @@
          localStorage.setItem("opentip-data", "already-fetched")
          addOpenTipDivLoader()
          fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/search/hash?request=${sha256Hash}`, {
-            method: "POST",
+            method: "GET",
             headers: {
                "origin": "opentip.kaspersky.com",
                "x-request-with": "any",
