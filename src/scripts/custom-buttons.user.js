@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.1.4
+// @version      1.1.6
 // @description  adds custom buttons and also loading opentip data report
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -163,6 +163,7 @@
       return null;
    }
    function getOpenTipData(sha256Hash) {
+      if (!confirm("Do you want to fetch the Kaspersky Opentip Report data?")) return;
       if (localStorage.getItem("opentip-data")) return;
       localStorage.setItem("opentip-data", "already-fetched")
       if (!getCookieValue("opentip_api_key")) {
@@ -177,14 +178,23 @@
                "x-request-with": "any",
                "x-api-key": getCookieValue("opentip_api_key")
             }
-         }).then((res) => res.json().then((report_data) => {
-            try {
-               setOpenTipDiv(report_data)
-            } catch (error) {
-               addOpenTipDivError()
-               console.log(error)
+         }).then((res) => {
+            if (res.status !== 200) {
+               addOpenTipDivError(`Error! response code: ${res.status}`)
+               console.log(res.status)
+               console.log(res.statusText)
+               console.log('https://opentip.kaspersky.com/Help/Doc_data/GetFileReport.htm#:~:text=web%20interface.-,Responses,-200%20OK')
+            } else {
+               res.json().then((report_data) => {
+                  try {
+                     setOpenTipDiv(report_data)
+                  } catch (error) {
+                     addOpenTipDivError()
+                     console.log(error)
+                  }
+               })
             }
-         })).catch((error) => {
+         }).catch((error) => {
             addOpenTipDivError()
             console.log(error)
          })
