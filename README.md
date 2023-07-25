@@ -1,12 +1,5 @@
 # VirusTotal customization
 
-Direktlinks:  
-[Installation](#script-installation)  
-[Updates](#script-update)  
-[Showcase](#showcase)
-[FAQ](#faq)  
-[CONTACT](#contact)  
-
 ----
 ## Script Installation
 
