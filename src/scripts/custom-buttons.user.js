@@ -97,7 +97,8 @@
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
       containerDiv.insertBefore(newDiv, containerDiv.firstChild)
    }
-   function addOpenTipDivError() {
+   function addOpenTipDivError(error_message) {
+      const error = error_message ?? "Error in the console";
       const newDiv = document.createElement("div");
       newDiv.innerHTML = `
       <div class="popular-threat-name border border-top-0 mb-2 p-3 hstack gap-4 bg-body-secondary" style="margin-top: -5px;">
@@ -105,7 +106,7 @@
          <span class="fw-bold">Failed to get Opentip Data!</span>
       </div>
       <div class="col hstack gap-2 text-truncate">
-         <span class="fw-bold">Error in the console</span>
+         <span class="fw-bold">${error}</span>
       </div>
       <div class="badge rounded-pill bg-body-tertiary text-body">
          <span onclick='${getSettingsCode()}' class="fw-bold">change apikey</span> 
@@ -165,9 +166,8 @@
       if (localStorage.getItem("opentip-data")) return;
       localStorage.setItem("opentip-data", "already-fetched")
       if (!getCookieValue("opentip_api_key")) {
-         addOpenTipDivError();
+         addOpenTipDivError("Missing APIKEY!");
          console.log("Please use the settings button to add or change your key!")
-         alert("Please use the settings button to add or change your key!")
       } else {
          addOpenTipDivLoader()
          fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/getresult/file?request=${sha256Hash}`, {
