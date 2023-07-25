@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.1
+// @version      2.0.2
 // @description  VirusTotal customization plugin
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
 // @icon         https://neiki.dev/assets/icon.png
-// @updateURL    https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/custom-buttons.user.js
-// @downloadURL  https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/custom-buttons.user.js
+// @updateURL    https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js
+// @downloadURL  https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js
 // ==/UserScript==
 
 (function () {

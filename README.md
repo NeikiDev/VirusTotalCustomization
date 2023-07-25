@@ -13,7 +13,7 @@ Direktlinks:
 1. open https://www.tampermonkey.net/
 2. Under "Download" with "Go to Store" install the plugin -> redirection to the app stores install there
 3. Then click on the following link to install the respective script, Tampermonkey should open automatically
-[virustotal-customization.user.js](https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/virustotal-customization.user.js)
+[virustotal-customization.user.js](https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js)
 4. Now just press "Update" or "Reinstall" in Tampermonkey.
    
    IMPORTANT: Then please reload the virustotal file report tab!
@@ -21,7 +21,7 @@ Direktlinks:
 
 ## Overlay updaten
 To update the overlay to a new version just click on the corresponding link.
-   - [virustotal-customization.user.js](https://github.com/NeikiDev/VirusTotalCustomButtons/raw/main/src/scripts/virustotal-customization.user.js) 
+   - [virustotal-customization.user.js](https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js) 
 Now just press "Update" or "Reinstall" in Tampermonkey.
 
     IMPORTANT: Then please reload the virustotal file report tab!
