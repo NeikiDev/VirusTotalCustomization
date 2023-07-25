@@ -163,9 +163,9 @@
       return null;
    }
    function getOpenTipData(sha256Hash) {
-      if (!confirm("Do you want to fetch the Kaspersky Opentip Report data?")) return;
       if (localStorage.getItem("opentip-data")) return;
       localStorage.setItem("opentip-data", "already-fetched")
+      if (!confirm("Do you want to fetch the Kaspersky Opentip Report data?")) return;
       if (!getCookieValue("opentip_api_key")) {
          addOpenTipDivError("Missing APIKEY!");
          console.log("Please use the settings button to add or change your key!")
