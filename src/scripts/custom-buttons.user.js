@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.1.3
+// @version      1.1.4
 // @description  adds custom buttons and also loading opentip data report
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -91,7 +91,7 @@
          </div>
       </div>
       <div class="badge rounded-pill bg-body-tertiary text-body">
-         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
+         <span onclick='${getSettingsCode()}' class="fw-bold">change apikey</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
@@ -108,7 +108,7 @@
          <span class="fw-bold">Error in the console</span>
       </div>
       <div class="badge rounded-pill bg-body-tertiary text-body">
-         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
+         <span onclick='${getSettingsCode()}' class="fw-bold">change apikey</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
@@ -144,7 +144,7 @@
          </div>
       </div>
       <div class="badge rounded-pill bg-body-tertiary text-body">
-         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
+         <span onclick='${getSettingsCode()}' class="fw-bold">change apikey</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
