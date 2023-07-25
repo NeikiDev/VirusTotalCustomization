@@ -19,7 +19,7 @@ Direktlinks:
    IMPORTANT: Then please reload the virustotal file report tab!
 ------
 
-## Overlay updaten
+## script updaten
 To update the overlay to a new version just click on the corresponding link.
    - [virustotal-customization.user.js](https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js) 
 Now just press "Update" or "Reinstall" in Tampermonkey.
