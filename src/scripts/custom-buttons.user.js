@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal Custom Buttons
 // @namespace    http://tampermonkey.net/
-// @version      1.0.8
+// @version      1.1.3
 // @description  adds custom buttons and also loading opentip data report
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -12,7 +12,7 @@
 
 (function () {
    'use strict';
-   setTimeout(() => { addButtons(); }, 3000)
+   setTimeout(() => {addButtons();}, 3000)
    setInterval(() => {
       if (document.querySelector("file-view")
          && document.querySelector("file-view").shadowRoot.getElementById("report")
@@ -69,6 +69,9 @@
         </li>
         `
    }
+   function getSettingsCode() {
+      return 'const e=prompt("ENTER YOUR OPENTIP APIKEY\\nNote: The key is stored (cookie) locally in your Browser!");e?(document.cookie=`opentip_api_key=${encodeURIComponent(e)};path=/`,alert("Done, please reload your browser!")):alert("Failed, please try again!");'
+   }
    function addOpenTipDivLoader(sha256Hash) {
       const newDiv = document.createElement("div");
       newDiv.innerHTML = `
@@ -76,7 +79,7 @@
       <div class="col hstack gap-2">
          <span class="fw-bold">Kaspersky Opentip Analysis</span> 
          <a class="link-info hstack gap-1" href="https://opentip.kaspersky.com/${sha256Hash}">
-            Loading Data... 
+            Fetching Data... 
          </a>
       </div>
       <div class="col hstack gap-2 text-truncate">
@@ -87,18 +90,29 @@
             </a>
          </div>
       </div>
-      <div class="col hstack gap-2 text-truncate">
-         <span class="fw-bold">ksn has seen the file </span> 
-         <div class="tags hstack gap-2">
-            <!----> 
-            <a class="badge rounded-pill bg-body-tertiary text-body" href="https://opentip.kaspersky.com/${sha256Hash}"> 
-             -
-            </a> <!----> 
-         </div>
-         <span class="fw-bold"> times</span> 
+      <div class="badge rounded-pill bg-body-tertiary text-body">
+         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
+      containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+   }
+   function addOpenTipDivError() {
+      const newDiv = document.createElement("div");
+      newDiv.innerHTML = `
+      <div class="popular-threat-name border border-top-0 mb-2 p-3 hstack gap-4 bg-body-secondary" style="margin-top: -5px;">
+      <div class="col hstack gap-2">
+         <span class="fw-bold">Failed to get Opentip Data!</span>
+      </div>
+      <div class="col hstack gap-2 text-truncate">
+         <span class="fw-bold">Error in the console</span>
+      </div>
+      <div class="badge rounded-pill bg-body-tertiary text-body">
+         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
+      </div>
+   </div>`
+      const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
+      containerDiv.removeChild(containerDiv.firstChild)
       containerDiv.insertBefore(newDiv, containerDiv.firstChild)
    }
    function setOpenTipDiv(report_data) {
@@ -129,15 +143,8 @@
             </a>
          </div>
       </div>
-      <div class="col hstack gap-2 text-truncate">
-         <span class="fw-bold">ksn has seen the file </span> 
-         <div class="tags hstack gap-2">
-            <!----> 
-            <a class="badge rounded-pill bg-body-tertiary text-body" href="https://opentip.kaspersky.com/${report_data.FileGeneralInfo.Sha256}"> 
-             ${report_data.FileGeneralInfo.HitsCount ?? 0} 
-            </a> <!----> 
-         </div>
-         <span class="fw-bold"> times</span> 
+      <div class="badge rounded-pill bg-body-tertiary text-body">
+         <span onclick='${getSettingsCode()}' class="fw-bold">change settings</span> 
       </div>
    </div>`
       const containerDiv = document.querySelector("file-view").shadowRoot.getElementById("report").querySelector(".tab-slot");
@@ -154,25 +161,13 @@
       }
       return null;
    }
-   function deleteCookie(cookieName) {
-      document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-   }
-   function checkOpenTipKeyStatus() {
-      const opentip_api_key = getCookieValue("opentip_api_key");
-      if (!opentip_api_key) {
-         const key = prompt("ENTER YOUR OPENTIP APIKEY\nNote: The key is stored locally in your Browser!")
-         if (key) {
-            document.cookie = `opentip_api_key=${encodeURIComponent(key)};path=/`;
-            return true;
-         } else return false;
-      } else return true;
-   }
    function getOpenTipData(sha256Hash) {
       if (localStorage.getItem("opentip-data")) return;
       localStorage.setItem("opentip-data", "already-fetched")
-      if (!checkOpenTipKeyStatus()) {
-         const resetKey = confirm("No or invalid Key found!\nDo you want to reset the local stored key?")
-         if (resetKey) { deleteCookie("opentip_api_key"); alert("Please reload the page, to enter a new key!") }
+      if (!getCookieValue("opentip_api_key")) {
+         addOpenTipDivError();
+         console.log("Please use the settings button to add or change your key!")
+         alert("Please use the settings button to add or change your key!")
       } else {
          addOpenTipDivLoader()
          fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/getresult/file?request=${sha256Hash}`, {
@@ -186,11 +181,11 @@
             try {
                setOpenTipDiv(report_data)
             } catch (error) {
-               alert("Failed to fetch Opentip Data!")
+               addOpenTipDivError()
                console.log(error)
             }
          })).catch((error) => {
-            alert("Failed to fetch Opentip Data!")
+            addOpenTipDivError()
             console.log(error)
          })
       }
