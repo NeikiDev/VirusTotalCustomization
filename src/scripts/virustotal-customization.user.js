@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.8
+// @version      2.2.9
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -209,13 +209,13 @@
       }
    }
    function loadCollectionTab(websiteType) {
-      if (websiteType !== "file") return;
-      document.querySelector(`file-view`)
-         .shadowRoot.getElementById("report")
-         .querySelector(`vt-ui-file-card`)
-         .shadowRoot.querySelector(".hstack.gap-2.fw-bold")
-         .innerHTML +=
-         `<vt-ui-menu id="main" class="position-relative">
+      if (websiteType === "file") {
+         document.querySelector(`file-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(`vt-ui-file-card`)
+            .shadowRoot.querySelector(".hstack.gap-2.fw-bold")
+            .innerHTML +=
+            `<vt-ui-menu id="main" class="position-relative">
          <slot name="trigger" slot="trigger">
            <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false"> Collection Utils </button>
          </slot>
@@ -232,9 +232,39 @@
          </vt-ui-submenu>
        </vt-ui-menu>
        `
+      } else if (websiteType === "url") {
+         document.querySelector(`url-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(`vt-ui-url-card`)
+            .shadowRoot.querySelector(".hstack.gap-2.fw-bold")
+            .innerHTML +=
+            `<vt-ui-menu id="main" class="position-relative">
+         <slot name="trigger" slot="trigger">
+           <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false"> Collection Utils </button>
+         </slot>
+         <vt-ui-submenu class="dropdown-menu end-0 show" name="tools" id="submenu" role="menu">
+           <a onclick='${getCode_virustotaladdcollection_url()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Add to Collection
+           </a>
+           <a onclick='${getCode_virustotalremovecollection_url()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Remove from Collection
+           </a>
+           <a onclick='${getVirustotalChangeAPIKEYCode()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Change Virustotal APIKEY
+           </a>
+         </vt-ui-submenu>
+       </vt-ui-menu>
+       `
+      }
+   }
+   function getCode_virustotaladdcollection_url() {
+      return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/urls`,{method:"POST",headers:{"x-apikey":getCookieValue("virustotal_api_key")},body:JSON.stringify({data:[{type:"url",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Added Url!")}).catch(e=>{console.log(e),alert("Error, failed to add url!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let a of t){let[o,i]=a.trim().split("=");if(o===e)return decodeURIComponent(i)}return null}'
+   }
+   function getCode_virustotalremovecollection_url() {
+      return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/urls`,{method:"DELETE",headers:{"x-apikey":getCookieValue("virustotal_api_key"),"Content-Type":"application/json",accept:"application/json"},body:JSON.stringify({data:[{type:"url",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Deleted Url!")}).catch(e=>{console.log(e),alert("Error, failed to delete!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let o of t){let[a,i]=o.trim().split("=");if(a===e)return decodeURIComponent(i)}return null}'
    }
    function getCode_virustotaladdcollection() {
-     return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/files`,{method:"POST",headers:{"x-apikey":getCookieValue("virustotal_api_key")},body:JSON.stringify({data:[{type:"file",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Added File!")}).catch(e=>{console.log(e),alert("Error, failed to add file!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let a of t){let[o,i]=a.trim().split("=");if(o===e)return decodeURIComponent(i)}return null}'
+      return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/files`,{method:"POST",headers:{"x-apikey":getCookieValue("virustotal_api_key")},body:JSON.stringify({data:[{type:"file",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Added File!")}).catch(e=>{console.log(e),alert("Error, failed to add file!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let a of t){let[o,i]=a.trim().split("=");if(o===e)return decodeURIComponent(i)}return null}'
    }
    function getCode_virustotalremovecollection() {
       return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/files`,{method:"DELETE",headers:{"x-apikey":getCookieValue("virustotal_api_key"),"Content-Type":"application/json",accept:"application/json"},body:JSON.stringify({data:[{type:"file",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Deleted File!")}).catch(e=>{console.log(e),alert("Error, failed to delete!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let o of t){let[a,i]=o.trim().split("=");if(a===e)return decodeURIComponent(i)}return null}'
