@@ -20,10 +20,11 @@ Now just press "Update" or "Reinstall" in Tampermonkey.
     IMPORTANT: Then please reload the virustotal file report tab!
 --------
 
-## Showcase 
+## Preview 
 
-![image](https://cdn.discordapp.com/attachments/1076495756959170612/1133096759497850930/image.png)
+![image](https://i.imgur.com/DJCD1Hn.png)
 
+version in image: 2.0.7
 
 ## FAQ
 
