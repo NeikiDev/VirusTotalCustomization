@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.8
+// @version      2.0.9
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -36,6 +36,7 @@
       }
    }
    function getButtons(sha256Hash) {
+      const bazaar_search_term = `sha256:${sha256Hash}`
       return `
         <li class="nav-item" role="presentation">
            <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
@@ -63,7 +64,7 @@
         </li>
         <li class="nav-item" role="presentation">
            <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
-              href="https://bazaar.abuse.ch/browse.php?search=${sha256Hash}" target="_blank">
+              href="https://bazaar.abuse.ch/browse.php?search=${encodeURIComponent(bazaar_search_term)}" target="_blank">
               <span>
                  <!---->Bazaar<!---->
               </span>
