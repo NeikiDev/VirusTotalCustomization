@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.7
+// @version      2.2.8
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -17,7 +17,7 @@
       const websiteType = window.location.href.split("/")[4];
       if (!websiteType || !whitelisted_types.includes(websiteType)) return;
       loadSettingsTab(websiteType);
-      loadCollectionTab();
+      loadCollectionTab(websiteType);
       load_extracted_engine_detections(websiteType);
       addButtons(websiteType);
    }, 3000)
@@ -208,7 +208,8 @@
          return extract_engines;
       }
    }
-   function loadCollectionTab() {
+   function loadCollectionTab(websiteType) {
+      if (websiteType !== "file") return;
       document.querySelector(`file-view`)
          .shadowRoot.getElementById("report")
          .querySelector(`vt-ui-file-card`)
