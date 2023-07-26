@@ -1,5 +1,9 @@
 # VirusTotal customization
 
+> **Warning**
+> Please dont show or give anyone your cookies! 
+> The Opentip Utils will store your apikey in the cookies.
+
 ----
 ## Script Installation
 
@@ -26,6 +30,12 @@ Now just press "Update" or "Reinstall" in Tampermonkey.
 ![image-urls](https://i.imgur.com/RAGPYOF.png)
 
 version in image: 2.2.1
+
+## Utils
+
+Here are some usefull Utils you can use.
+
+[Virustotal - Remove file from Collection (python)](https://github.com/NeikiDev/VirusTotalCustomization/blob/main/utils/virustotal/remove-file-collection.py)
 
 ## FAQ
 
