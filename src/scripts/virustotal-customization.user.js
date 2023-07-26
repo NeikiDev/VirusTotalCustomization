@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.9
+// @version      2.2.0
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
+// @match        https://www.virustotal.com/gui/url/*
 // @icon         https://neiki.dev/assets/icon.png
 // @updateURL    https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js
 // @downloadURL  https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js
@@ -12,7 +13,14 @@
 
 (function () {
    'use strict';
-   setTimeout(() => { addButtons(); loadSettingsTab(); load_extracted_engine_detections(); }, 3000)
+   setTimeout(() => {
+      const whitelisted_types = ["url", "file"]
+      const websiteType = window.location.href.split("/")[4];
+      if (!websiteType || !whitelisted_types.includes(websiteType)) return;
+      loadSettingsTab(websiteType);
+      load_extracted_engine_detections(websiteType);
+      addButtons(websiteType);
+   }, 3000)
    setInterval(() => {
       if (document.querySelector("file-view")
          && document.querySelector("file-view").shadowRoot.getElementById("report")
@@ -22,22 +30,35 @@
          addButtons()
       }
    }, 3000)
-   function addButtons() {
-      const hashRegex = /([0-9a-f]{64})/i;
-      let sha256Hash = hashRegex.exec(window.location.href);
-      if (!sha256Hash || !sha256Hash[0]) return;
-      sha256Hash = sha256Hash[0].toLowerCase();
-      if (!localStorage.getItem("opentip-data")) {
-         addOpenTipStartDiv(sha256Hash);
-      }
-      if (document.querySelector("file-view") && document.querySelector("file-view").shadowRoot.getElementById("report") && document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
-         const buttons_to_add = getButtons(sha256Hash)
-         document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
+   function addButtons(type) {
+      if (type === "file") {
+         const hashRegex = /([0-9a-f]{64})/i;
+         let sha256Hash = hashRegex.exec(window.location.href);
+         if (!sha256Hash || !sha256Hash[0]) return;
+         sha256Hash = sha256Hash[0].toLowerCase();
+         if (!localStorage.getItem("opentip-data")) {
+            addOpenTipStartDiv(sha256Hash);
+         }
+         if (document.querySelector("file-view") && document.querySelector("file-view").shadowRoot.getElementById("report") && document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
+            const buttons_to_add = getButtons(sha256Hash, "file")
+            document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
+         }
+      } else if (type === "url") {
+         const url = document.querySelector("url-view")
+            .shadowRoot.getElementById("report")
+            .querySelector("vt-ui-url-card")
+            .shadowRoot.querySelector(".url-id").innerHTML.split("!---->")[1].split("<")[0]
+         if (!url) return alert("NO URL");
+         if (document.querySelector("url-view") && document.querySelector("url-view").shadowRoot.getElementById("report") && document.querySelector("url-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
+            const buttons_to_add = getButtons(url, "url")
+            document.querySelector("url-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML += buttons_to_add
+         }
       }
    }
-   function getButtons(sha256Hash) {
-      const bazaar_search_term = `sha256:${sha256Hash}`
-      return `
+   function getButtons(sha256Hash, type) {
+      if (type === "file") {
+         const bazaar_search_term = `sha256:${sha256Hash}`
+         return `
         <li class="nav-item" role="presentation">
            <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
               href="https://opentip.kaspersky.com/${sha256Hash}" target="_blank">
@@ -71,13 +92,51 @@
            </a>
         </li>
         `
+      } else if (type === "url") {
+         const urlObject = new URL(sha256Hash);
+         const extracted_domain = urlObject.hostname
+         return `
+        <li class="nav-item" role="presentation">
+           <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
+              href="https://opentip.kaspersky.com/${encodeURIComponent(sha256Hash)}" target="_blank">
+              <span>
+                 <!---->Opentip<!---->
+              </span>
+           </a>
+        </li>
+        <li class="nav-item" role="presentation">
+           <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
+              href="https://sitereport.netcraft.com/?url=${sha256Hash}" target="_blank">
+              <span>
+                 <!---->NetCraft<!---->
+              </span>
+           </a>
+        </li>
+        <li class="nav-item" role="presentation">
+           <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
+              href="https://www.urlvoid.com/scan/${extracted_domain}/" target="_blank">
+              <span>
+                 <!---->UrlVoid<!---->
+              </span>
+           </a>
+        </li>
+        <li class="nav-item" role="presentation">
+           <a data-bs-toggle="tab" role="tab" no-history="" class="nav-link p-3 px-4  hstack gap-2" aria-selected="false" data-route="community"
+              href="https://sitecheck.sucuri.net/results/${sha256Hash}" target="_blank">
+              <span>
+                 <!---->Sitecheck<!---->
+              </span>
+           </a>
+        </li>
+        `
+      }
    }
-   function load_extracted_engine_detections() {
-      const extracted_detections = extract_engine_detection()
+   function load_extracted_engine_detections(website_type) {
+      const extracted_detections = extract_engine_detection(website_type)
       let extracted_html = "";
       extracted_detections.forEach((div_to_place) => {
-         extracted_html += 
-         `
+         extracted_html +=
+            `
          <div class="detection hstack">
          ${div_to_place.innerHTML}
          </div>
@@ -99,31 +158,57 @@
    </span>
    `
 
-      const containerDiv = document.querySelector("file-view")
-         .shadowRoot.getElementById("report")
-         .querySelector(".tab-slot").querySelector("#detectionsList").shadowRoot
-      containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+      if (website_type === "url") {
+         const containerDiv = document.querySelector(`url-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(".tab-slot").querySelector("vt-ui-detections-list")
+            .shadowRoot
+         containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+      } else if (website_type === "file") {
+         const containerDiv = document.querySelector(`file-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(".tab-slot").querySelector("#detectionsList").shadowRoot
+         containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+      }
    }
-   function extract_engine_detection() {
-      const detections_found = document.querySelector("file-view")
-         .shadowRoot.getElementById("report")
-         .querySelector(".tab-slot").querySelector("#detectionsList")
-         .shadowRoot.querySelector("#detections")
-         .querySelectorAll(".detection.hstack")
-      const extract_engines = [];
-      const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "ESET-NOD32", "Microsoft", "F-Secure"];
-      detections_found.forEach((detectionDiv) => {
-         const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
-         if (whitelisted_engines.includes(engine_name)) {
-            extract_engines.push(detectionDiv)
-         }
-      })
-      return extract_engines;
+   function extract_engine_detection(website_type) {
+      if (website_type === "url") {
+         const detections_found = document.querySelector(`url-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(".tab-slot").querySelector("vt-ui-detections-list")
+            .shadowRoot.querySelector("#detections")
+            .querySelectorAll(".detection.hstack")
+         const extract_engines = [];
+         const whitelisted_engines = ["Kaspersky", "BitDefender", "OpenPhish", "Netcraft", "Phishtank", "Google Safebrowsing", "URLhaus", "Sucuri SiteCheck"];
+         detections_found.forEach((detectionDiv) => {
+            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
+            if (whitelisted_engines.includes(engine_name)) {
+               extract_engines.push(detectionDiv)
+               console.log(engine_name)
+            }
+         })
+         return extract_engines;
+      } else if (website_type === "file") {
+         const detections_found = document.querySelector(`${website_type}-view`)
+            .shadowRoot.getElementById("report")
+            .querySelector(".tab-slot").querySelector("#detectionsList")
+            .shadowRoot.querySelector("#detections")
+            .querySelectorAll(".detection.hstack")
+         const extract_engines = [];
+         const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "ESET-NOD32", "Microsoft", "F-Secure"];
+         detections_found.forEach((detectionDiv) => {
+            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
+            if (whitelisted_engines.includes(engine_name)) {
+               extract_engines.push(detectionDiv)
+            }
+         })
+         return extract_engines;
+      }
    }
-   function loadSettingsTab() {
-      document.querySelector("file-view")
+   function loadSettingsTab(website_type) {
+      document.querySelector(`${website_type}-view`)
          .shadowRoot.getElementById("report")
-         .querySelector("vt-ui-file-card")
+         .querySelector(`vt-ui-${website_type}-card`)
          .shadowRoot.querySelector(".hstack.gap-4")
          .innerHTML +=
          `<vt-ui-menu id="main" class="position-relative">
