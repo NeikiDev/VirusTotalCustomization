@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.3
+// @version      2.0.6
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -12,7 +12,7 @@
 
 (function () {
    'use strict';
-   setTimeout(() => { addButtons(); }, 3000)
+   setTimeout(() => { addButtons(); loadSettingsTab(); load_extracted_engine_detections(); }, 3000)
    setInterval(() => {
       if (document.querySelector("file-view")
          && document.querySelector("file-view").shadowRoot.getElementById("report")
@@ -70,6 +70,80 @@
            </a>
         </li>
         `
+   }
+   function load_extracted_engine_detections() {
+      const extracted_detections = extract_engine_detection()
+      let extracted_html = "";
+      extracted_detections.forEach((div_to_place) => {
+         extracted_html += 
+         `
+         <div class="detection hstack">
+         ${div_to_place.innerHTML}
+         </div>
+         `;
+      })
+      const newDiv = document.createElement("vt-ui-expandable");
+      newDiv.setAttribute("class", "no-ident-expandable")
+      newDiv.setAttribute("expanded", "")
+      newDiv.innerHTML += `
+      <span slot="header" class="hstack w-100">
+      <div class="fw-bold fs-6 hstack gap-2">
+         Quick view - Security vendors' analysis
+      </div>
+   </span>
+   <span slot="content">
+      <div id="detections" class="sub-section" wide-layout="">
+         ${extracted_html}
+      </div>
+   </span>
+   `
+
+      const containerDiv = document.querySelector("file-view")
+         .shadowRoot.getElementById("report")
+         .querySelector(".tab-slot").querySelector("#detectionsList").shadowRoot
+      containerDiv.insertBefore(newDiv, containerDiv.firstChild)
+   }
+   function extract_engine_detection() {
+      const detections_found = document.querySelector("file-view")
+         .shadowRoot.getElementById("report")
+         .querySelector(".tab-slot").querySelector("#detectionsList")
+         .shadowRoot.querySelector("#detections")
+         .querySelectorAll(".detection.hstack")
+
+      const extract_engines = [];
+      const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "Google", "Microsoft", "F-Secure"];
+
+      detections_found.forEach((detectionDiv) => {
+         const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
+         if (whitelisted_engines.includes(engine_name)) {
+            extract_engines.push(detectionDiv)
+         }
+      })
+      return extract_engines;
+   }
+   function loadSettingsTab() {
+      document.querySelector("file-view")
+         .shadowRoot.getElementById("report")
+         .querySelector("vt-ui-file-card")
+         .shadowRoot.querySelector(".hstack.gap-4")
+         .innerHTML +=
+         `<vt-ui-menu id="main" class="position-relative">
+         <slot name="trigger" slot="trigger">
+           <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false" style="outline: 2px solid red;"> Plugin Settings </button>
+         </slot>
+         <vt-ui-submenu class="dropdown-menu end-0 show" name="tools" id="submenu" role="menu">
+         <a href="https://github.com/NeikiDev/VirusTotalCustomization" class="hstack gap-2 dropdown-item" role="button" data-submenu-close-on-click="">
+            VirusTotal Customization Plugin
+           </a>
+           <a href="https://github.com/NeikiDev/VirusTotalCustomization/raw/main/src/scripts/virustotal-customization.user.js" class="hstack gap-2 dropdown-item" role="button" data-submenu-close-on-click="">
+             Check for updates
+           </a>
+           <a onclick="javascript:alert('Soon!')" class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Change Settings
+           </a>
+         </vt-ui-submenu>
+       </vt-ui-menu>
+       `
    }
    function getSettingsCode() {
       return 'const e=prompt("ENTER YOUR OPENTIP APIKEY\\nNote: The key is stored (cookie) locally in your Browser!");e?(document.cookie=`opentip_api_key=${encodeURIComponent(e)};path=/`,alert("Done, please reload your browser!")):alert("Failed, please try again!");'
