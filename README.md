@@ -22,9 +22,10 @@ Now just press "Update" or "Reinstall" in Tampermonkey.
 
 ## Preview 
 
-![image](https://i.imgur.com/DJCD1Hn.png)
+![image-files](https://i.imgur.com/DJCD1Hn.png)
+![image-urls](https://i.imgur.com/RAGPYOF.png)
 
-version in image: 2.0.7
+version in image: 2.2.1
 
 ## FAQ
 
