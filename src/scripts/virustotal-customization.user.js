@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.1
+// @version      2.2.2
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -27,7 +27,10 @@
          && document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav") &&
          !document.querySelector("file-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav").innerHTML.includes("analyze.neiki.dev")
       ) {
-         addButtons()
+         const whitelisted_types = ["url", "file"]
+         const websiteType = window.location.href.split("/")[4];
+         if (!websiteType || !whitelisted_types.includes(websiteType)) return;
+         addButtons(websiteType)
       }
    }, 3000)
    function addButtons(type) {
