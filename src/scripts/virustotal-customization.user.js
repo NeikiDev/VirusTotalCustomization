@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.2
+// @version      2.2.3
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -212,7 +212,7 @@
       document.querySelector(`${website_type}-view`)
          .shadowRoot.getElementById("report")
          .querySelector(`vt-ui-${website_type}-card`)
-         .shadowRoot.querySelector(".hstack.gap-4")
+         .shadowRoot.querySelector(".hstack.gap-2.fw-bold")
          .innerHTML +=
          `<vt-ui-menu id="main" class="position-relative">
          <slot name="trigger" slot="trigger">
