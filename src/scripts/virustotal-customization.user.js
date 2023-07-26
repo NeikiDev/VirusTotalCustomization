@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.0.7
+// @version      2.0.8
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -109,10 +109,8 @@
          .querySelector(".tab-slot").querySelector("#detectionsList")
          .shadowRoot.querySelector("#detections")
          .querySelectorAll(".detection.hstack")
-
       const extract_engines = [];
-      const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "Google", "Microsoft", "F-Secure"];
-
+      const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "ESET-NOD32", "Microsoft", "F-Secure"];
       detections_found.forEach((detectionDiv) => {
          const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
          if (whitelisted_engines.includes(engine_name)) {
