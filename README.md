@@ -1,8 +1,8 @@
 # VirusTotal customization
 
-> **Warning**
-> Please dont show or give anyone your cookies! 
-> The Opentip Utils will store your apikey in the cookies.
+## WARNING
+
+**Please do not share your cookies on that website with anyone! <br> Your Opentip and Virustotal Keys are locally stored in the cookies!**
 
 ----
 ## Script Installation

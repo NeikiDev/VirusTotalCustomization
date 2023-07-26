@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.3
+// @version      2.2.7
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -12,12 +12,12 @@
 // ==/UserScript==
 
 (function () {
-   'use strict';
    setTimeout(() => {
       const whitelisted_types = ["url", "file"]
       const websiteType = window.location.href.split("/")[4];
       if (!websiteType || !whitelisted_types.includes(websiteType)) return;
       loadSettingsTab(websiteType);
+      loadCollectionTab();
       load_extracted_engine_detections(websiteType);
       addButtons(websiteType);
    }, 3000)
@@ -208,6 +208,36 @@
          return extract_engines;
       }
    }
+   function loadCollectionTab() {
+      document.querySelector(`file-view`)
+         .shadowRoot.getElementById("report")
+         .querySelector(`vt-ui-file-card`)
+         .shadowRoot.querySelector(".hstack.gap-2.fw-bold")
+         .innerHTML +=
+         `<vt-ui-menu id="main" class="position-relative">
+         <slot name="trigger" slot="trigger">
+           <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false"> Collection Utils </button>
+         </slot>
+         <vt-ui-submenu class="dropdown-menu end-0 show" name="tools" id="submenu" role="menu">
+           <a onclick='${getCode_virustotaladdcollection()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Add to Collection
+           </a>
+           <a onclick='${getCode_virustotalremovecollection()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Remove from Collection
+           </a>
+           <a onclick='${getVirustotalChangeAPIKEYCode()}' class="hstack gap-2 dropdown-item" data-submenu-close-on-click="">
+            Change Virustotal APIKEY
+           </a>
+         </vt-ui-submenu>
+       </vt-ui-menu>
+       `
+   }
+   function getCode_virustotaladdcollection() {
+     return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/files`,{method:"POST",headers:{"x-apikey":getCookieValue("virustotal_api_key")},body:JSON.stringify({data:[{type:"file",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Added File!")}).catch(e=>{console.log(e),alert("Error, failed to add file!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let a of t){let[o,i]=a.trim().split("=");if(o===e)return decodeURIComponent(i)}return null}'
+   }
+   function getCode_virustotalremovecollection() {
+      return 'if(getCookieValue("virustotal_api_key")){let e=prompt("Enter ollection ID");e?fetch(`https://www.virustotal.com/api/v3/collections/${e}/files`,{method:"DELETE",headers:{"x-apikey":getCookieValue("virustotal_api_key"),"Content-Type":"application/json",accept:"application/json"},body:JSON.stringify({data:[{type:"file",id:getSha256Hash()},]})}).then(e=>{200!==e.status?(alert(`Failed, please try again, error code: ${e.status}`),console.log(e.status),console.log(e.statusText)):alert("Deleted File!")}).catch(e=>{console.log(e),alert("Error, failed to delete!")}):alert("Failed, please try again!")}else alert("No Virustotal apikey found, please use the option to add it!");function getSha256Hash(){let e=/([0-9a-f]{64})/i.exec(window.location.href);return e&&e[0]?e[0].toLowerCase():null}function getCookieValue(e){let t=document.cookie.split(";");for(let o of t){let[a,i]=o.trim().split("=");if(a===e)return decodeURIComponent(i)}return null}'
+   }
    function loadSettingsTab(website_type) {
       document.querySelector(`${website_type}-view`)
          .shadowRoot.getElementById("report")
@@ -216,7 +246,7 @@
          .innerHTML +=
          `<vt-ui-menu id="main" class="position-relative">
          <slot name="trigger" slot="trigger">
-           <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false" style="outline: 2px solid red;"> Plugin Settings </button>
+           <button type="button" class="btn btn-link p-0 dropdown-toggle fw-semibold" aria-disabled="false"> Plugin Settings </button>
          </slot>
          <vt-ui-submenu class="dropdown-menu end-0 show" name="tools" id="submenu" role="menu">
          <a href="https://github.com/NeikiDev/VirusTotalCustomization" class="hstack gap-2 dropdown-item" role="button" data-submenu-close-on-click="">
@@ -231,6 +261,9 @@
          </vt-ui-submenu>
        </vt-ui-menu>
        `
+   }
+   function getVirustotalChangeAPIKEYCode() {
+      return 'const e=prompt("ENTER YOUR VIRUSTOTAL APIKEY\\nNote: The key is stored (cookie) locally in your Browser!");e?(document.cookie=`virustotal_api_key=${encodeURIComponent(e)};path=/`,alert("Done, please reload your browser!")):alert("Failed, please try again!");'
    }
    function getSettingsCode() {
       return 'const e=prompt("ENTER YOUR OPENTIP APIKEY\\nNote: The key is stored (cookie) locally in your Browser!");e?(document.cookie=`opentip_api_key=${encodeURIComponent(e)};path=/`,alert("Done, please reload your browser!")):alert("Failed, please try again!");'
