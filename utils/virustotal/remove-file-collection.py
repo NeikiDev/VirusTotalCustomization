@@ -1,4 +1,5 @@
 import requests
+import json
 
 def remove_file():
 
@@ -11,15 +12,16 @@ def remove_file():
     headers = {
         "x-apikey": virustotal_apikey,
         "Content-Type": "application/json",
+        "accept": "application/json"
     }
-    data = {
+    data = json.dumps({
         "data": [
             {
                 "type": "file",
                 "id": file_sha256_hash,
             },
         ]
-    }
+    })
     
     response = requests.delete(url, headers=headers, data=data)
     if response.status_code == 200:
