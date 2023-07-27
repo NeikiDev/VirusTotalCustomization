@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.2.9
+// @version      2.3.1
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -175,38 +175,35 @@
       }
    }
    function extract_engine_detection(website_type) {
+      const extract_engines = [];
       if (website_type === "url") {
          const detections_found = document.querySelector(`url-view`)
             .shadowRoot.getElementById("report")
             .querySelector(".tab-slot").querySelector("vt-ui-detections-list")
             .shadowRoot.querySelector("#detections")
             .querySelectorAll(".detection.hstack")
-         const extract_engines = [];
          const whitelisted_engines = ["Kaspersky", "BitDefender", "OpenPhish", "Netcraft", "Phishtank", "Google Safebrowsing", "URLhaus", "Sucuri SiteCheck"];
          detections_found.forEach((detectionDiv) => {
-            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
+            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim().split("-->").pop();;
             if (whitelisted_engines.includes(engine_name)) {
                extract_engines.push(detectionDiv)
-               console.log(engine_name)
             }
          })
-         return extract_engines;
       } else if (website_type === "file") {
-         const detections_found = document.querySelector(`${website_type}-view`)
+         const detections_found = document.querySelector(`file-view`)
             .shadowRoot.getElementById("report")
             .querySelector(".tab-slot").querySelector("#detectionsList")
             .shadowRoot.querySelector("#detections")
             .querySelectorAll(".detection.hstack")
-         const extract_engines = [];
          const whitelisted_engines = ["Kaspersky", "BitDefender", "Sophos", "ESET-NOD32", "Microsoft", "F-Secure"];
          detections_found.forEach((detectionDiv) => {
-            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim();
+            const engine_name = detectionDiv.querySelector(".engine-name").innerHTML.trim().split("-->").pop();
             if (whitelisted_engines.includes(engine_name)) {
                extract_engines.push(detectionDiv)
             }
          })
-         return extract_engines;
       }
+      return extract_engines;
    }
    function loadCollectionTab(websiteType) {
       if (websiteType === "file") {
