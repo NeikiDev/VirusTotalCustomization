@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.3.1
+// @version      2.3.2
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -50,7 +50,7 @@
          const url = document.querySelector("url-view")
             .shadowRoot.getElementById("report")
             .querySelector("vt-ui-url-card")
-            .shadowRoot.querySelector(".url-id").innerHTML.split("!---->")[1].split("<")[0]
+            .shadowRoot.querySelector(".url-id").innerHTML.split("-->")[1]
          if (!url) return alert("NO URL");
          if (document.querySelector("url-view") && document.querySelector("url-view").shadowRoot.getElementById("report") && document.querySelector("url-view").shadowRoot.getElementById("report").shadowRoot.querySelector(".nav")) {
             const buttons_to_add = getButtons(url, "url")
