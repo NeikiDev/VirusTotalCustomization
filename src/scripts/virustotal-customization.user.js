@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VirusTotal customization
 // @namespace    http://tampermonkey.net/
-// @version      2.3.3
+// @version      2.3.4
 // @description  VirusTotal customization plugin - buttons and more
 // @author       NeikiDev
 // @match        https://www.virustotal.com/gui/file/*
@@ -415,7 +415,7 @@
          if (localStorage.getItem("opentip-data")) return;
          localStorage.setItem("opentip-data", "already-fetched")
          addOpenTipDivLoader()
-         fetch(`https://proxy.pleasedontbearealdomain.com/https://opentip.kaspersky.com/api/v1/search/hash?request=${sha256Hash}`, {
+         fetch(`https://proxy.neiki.dev/https://opentip.kaspersky.com/api/v1/search/hash?request=${sha256Hash}`, {
             method: "GET",
             headers: {
                "origin": "opentip.kaspersky.com",
