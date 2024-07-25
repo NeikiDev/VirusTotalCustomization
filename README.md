@@ -1,3 +1,5 @@
+# will no longer be updated for a indefinitely time
+
 # VirusTotal customization
 
 ## WARNING
